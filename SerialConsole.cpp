@@ -196,8 +196,8 @@ void SerialConsole::handleShortCmd()
         
     //Lawicel specific commands    
     case 'O': //LAWICEL open canbus port (first one only because LAWICEL has no concept of dual canbus
-        Can0.disable_autobaud_listen_mode();
-        Can0.begin(settings.CAN0Speed, 255);
+        //Can0.disable_autobaud_listen_mode();
+        //Can0.begin(settings.CAN0Speed, 255);
         Can0.enable();
         SerialUSB.write(13); //send CR to mean "ok"
         SysSettings.lawicelMode = true;
