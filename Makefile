@@ -1,24 +1,19 @@
-ARDUINO_HOME=$(HOME)/Library/Arduino15/
-ARDUINO_LIB_HOME=$(HOME)/Documents/Arduino/libraries/
-BUILDER_PATH=/Applications/Arduino.app/Contents/Java/
-BUILDER_TOOLS_PATH=/Applications/Arduino.app/Contents/Java/tools-builder
-SERIAL_PORT=/dev/tty.usbmodem1411141
+PORT ?= /dev/ttyACM0
+CURDIR := $(shell basename $(PWD))
 
-m2: BOARD := macchina:sam:m2
-m2: build/M2RET.ino.bin
+.PHONY: flash
 
-build/M2RET.ino.bin: M2RET.ino $(wildcard *.cpp) $(wildcard *.h)
-	mkdir -p build/
-	$(BUILDER_PATH)arduino-builder -build-path $(PWD)/build -tools $(ARDUINO_HOME)packages/arduino/tools/ -tools $(BUILDER_TOOLS_PATH) -hardware $(BUILDER_PATH)hardware/ -hardware $(ARDUINO_HOME)packages/ -libraries $(ARDUINO_LIB_HOME) -fqbn $(BOARD) $<
+all: flash
 
-bootloader:
-	stty -F $(SERIAL_PORT) 1200 cs8 cread clocal
-	sleep 1
+BOARD := macchina:sam:m2
 
-flash:
-	cp build/M2RET.ino.bin build/firmware.ino.bin
-	$(ARDUINO_HOME)packages/arduino/tools/bossac/1.6.1-arduino/bossac -e -w -v -b build/firmware.ino.bin -R
+M2RET.macchina.sam.m2.bin: M2RET.ino $(wildcard *.cpp) $(wildcard *.h)
+	cd .. && arduino-cli compile --fqbn $(BOARD) $(CURDIR)
+
+flash: M2RET.macchina.sam.m2.bin
+	cd .. && arduino-cli upload --fqbn $(BOARD) -p $(PORT) $(CURDIR)
 
 clean:
-	rm -rf build/
+	rm M2RET.macchina.sam.m2.bin
+	rm M2RET.macchina.sam.m2.elf
 

@@ -27,6 +27,8 @@
 *.exe
 *.out
 *.app
+M2RET.macchina.sam.m2.bin
+M2RET.macchina.sam.m2.elf
 
 # build directory
 build/
